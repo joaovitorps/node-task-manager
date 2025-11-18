@@ -1,0 +1,21 @@
+{
+  "name": "task-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node --watch server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joaovitorps/node-task-manager.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/joaovitorps/node-task-manager/issues"
+  },
+  "homepage": "https://github.com/joaovitorps/node-task-manager#readme"
+}
