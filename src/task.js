@@ -4,6 +4,19 @@ import fs from "node:fs/promises";
 export default class Task {
     #task = {}
 
+    async init() {
+        try {
+            const fileContentBuffered = await fs.readFile('tasks.json');
+            this.#task = JSON.parse(Buffer.from(fileContentBuffered).toString());
+        } catch (error) {
+            await this.#persist();
+        }
+    }
+
+    async fetch() {
+        return this.#task ?? [];
+    }
+
     async insert(title, description) {
         const today = new Date();
 
@@ -22,6 +35,10 @@ export default class Task {
             this.#task['tasks'] = [newTask]
         }
 
+        await this.#persist();
+    }
+
+    async #persist() {
         await fs.writeFile('tasks.json', JSON.stringify(this.#task))
     }
 }
