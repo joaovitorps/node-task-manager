@@ -1,44 +1,37 @@
 import http from 'node:http'
+import routes from "./src/routes.js";
 import Task from './src/task.js'
+import Middleware from "./src/middleware.js";
+import jsonResponse from './src/response-api.js'
 
 const task = new Task();
 await task.init();
 
 http.createServer(async (req, res) => {
-    res.setHeader('Content-type', 'application/json')
-
     try {
         const {url, method} = req
 
-        switch (url) {
-            case '/tasks':
-                switch (method) {
-                    case 'GET':
-                        return res.writeHead(200).end(JSON.stringify(await task.fetch()));
+        const routeUrlFound = routes.filter(route => {
+            return route.url.test(url)
+        })
 
-                    case 'POST':
-                        await req.on('data', async (chunk) => {
-                            try {
-                                const {title, description} = JSON.parse(Buffer.from(chunk).toString());
-
-                                await task.insert(title, description);
-                            } catch (error) {
-                                console.error(error);
-                                res.writeHead(500).end();
-                            }
-                        })
-
-                        return res.writeHead(201).end(JSON.stringify({status: 201, message: 'Created Successfully'}));
-
-                    default:
-                        res.writeHead(405).end();
-                }
-                break;
-            default:
-                res.writeHead(404).end();
+        if (routeUrlFound.length === 0) {
+            return jsonResponse(res, {}, 404);
         }
+
+        const methodRouteUrl = routeUrlFound.find(route => {
+            return route.method === method
+        });
+
+        if (!methodRouteUrl) {
+            return jsonResponse(res, {}, 405);
+        }
+
+        const middleware = new Middleware(req, res);
+
+        return methodRouteUrl.function(req, res, middleware, task);
     } catch (error) {
         console.error(error);
-        res.writeHead(500).end();
+        return jsonResponse(res,  {}, 500);
     }
 }).listen('8000')

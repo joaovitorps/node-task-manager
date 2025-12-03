@@ -2,19 +2,33 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 
 export default class Task {
-    #task = {}
+    #tasks = {}
 
     async init() {
         try {
             const fileContentBuffered = await fs.readFile('tasks.json');
-            this.#task = JSON.parse(Buffer.from(fileContentBuffered).toString());
+            this.#tasks = JSON.parse(Buffer.from(fileContentBuffered).toString());
         } catch (error) {
             await this.#persist();
         }
     }
 
-    async fetch() {
-        return this.#task ?? [];
+    async fetch(query) {
+        let tasksFiltered = this.#tasks['tasks'] ?? [];
+
+        if (query ? query['title'] || query['description'] : false) {
+            const queryParams = Object.entries(query);
+
+            tasksFiltered = tasksFiltered.filter(task => {
+                return queryParams.some(([key, value]) =>{
+                    if (!task[key]) return false;
+
+                    return task[key].toLowerCase().includes(value.toLowerCase())
+                })
+            })
+        }
+
+        return tasksFiltered;
     }
 
     async insert(title, description) {
@@ -29,16 +43,16 @@ export default class Task {
             updated_at: today,
         }
 
-        if (Array.isArray(this.#task['tasks'])) {
-            this.#task['tasks'].push(newTask);
+        if (Array.isArray(this.#tasks['tasks'])) {
+            this.#tasks['tasks'].push(newTask);
         } else {
-            this.#task['tasks'] = [newTask]
+            this.#tasks['tasks'] = [newTask]
         }
 
         await this.#persist();
     }
 
     async #persist() {
-        await fs.writeFile('tasks.json', JSON.stringify(this.#task))
+        await fs.writeFile('tasks.json', JSON.stringify(this.#tasks))
     }
 }
