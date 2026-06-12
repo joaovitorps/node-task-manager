@@ -1,5 +1,6 @@
-import jsonResponse from "./response-api.js";
-import verifyUrl from "./verify-url.js";
+import jsonResponse from "../../../response-api.js";
+import verifyUrl from "../../../verify-url.js";
+import { createTask } from "./create.js";
 
 const routes = [
   {
@@ -31,21 +32,8 @@ const routes = [
   {
     url: verifyUrl("/tasks"),
     method: "POST",
-    function: async (req, res, middleware, task) => {
-      await req.on("data", async (chunk) => {
-        try {
-          const { title, description } = JSON.parse(
-            Buffer.from(chunk).toString(),
-          );
-
-          await task.insert(title, description);
-        } catch (error) {
-          console.error(error);
-          jsonResponse(res, {}, 500);
-        }
-      });
-
-      return jsonResponse(res, {}, 201, "Task Created Successfully");
+    function: async (req, res, _, task) => {
+      await createTask(req, res, task);
     },
   },
 ];

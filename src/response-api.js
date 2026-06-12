@@ -6,11 +6,14 @@ export default function jsonResponse(
 ) {
   response.setHeader("Content-type", "application/json");
 
-  return response.writeHead(httpCode).end(
-    JSON.stringify({
-      status: httpCode,
-      message: message || response.statusMessage,
-      data,
-    }),
-  );
+  const obj = {
+    status: httpCode,
+    message: message || response.statusMessage,
+  };
+
+  if (data) {
+    obj.data = data;
+  }
+
+  return response.writeHead(httpCode).end(JSON.stringify(obj));
 }
