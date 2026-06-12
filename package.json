@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/joaovitorps/node-task-manager/issues"
   },
-  "homepage": "https://github.com/joaovitorps/node-task-manager#readme"
+  "homepage": "https://github.com/joaovitorps/node-task-manager#readme",
+  "devDependencies": {
+    "@biomejs/biome": "2.5.0"
+  }
 }

@@ -2,33 +2,52 @@ import jsonResponse from "./response-api.js";
 import verifyUrl from "./verify-url.js";
 
 const routes = [
-    {
-        url: verifyUrl('/tasks'),
-        method: 'GET',
-        function: async (req, res, middleware, task) => {
-            const {query} = req;
+  {
+    url: verifyUrl("/tasks/:id"),
+    method: "PUT",
+    function: async (req, res, middleware, task) => {
+      const { query, params } = req;
 
-            return jsonResponse(res, await task.fetch(Object.keys(query).length !== 0 ? query : null));
-        }
+      console.log(params.id);
+
+      return jsonResponse(
+        res,
+        await task.fetch(Object.keys(query).length !== 0 ? query : null),
+      );
     },
-    {
-        url: verifyUrl('/tasks'),
-        method: 'POST',
-        function: async (req, res, middleware, task) => {
-            await req.on('data', async (chunk) => {
-                try {
-                    const {title, description} = JSON.parse(Buffer.from(chunk).toString());
+  },
+  {
+    url: verifyUrl("/tasks"),
+    method: "GET",
+    function: async (req, res, middleware, task) => {
+      const { query } = req;
 
-                    await task.insert(title, description);
-                } catch (error) {
-                    console.error(error);
-                    jsonResponse(res, {}, 500);
-                }
-            })
+      return jsonResponse(
+        res,
+        await task.fetch(Object.keys(query).length !== 0 ? query : null),
+      );
+    },
+  },
+  {
+    url: verifyUrl("/tasks"),
+    method: "POST",
+    function: async (req, res, middleware, task) => {
+      await req.on("data", async (chunk) => {
+        try {
+          const { title, description } = JSON.parse(
+            Buffer.from(chunk).toString(),
+          );
 
-            return jsonResponse(res, {}, 201, 'Task Created Successfully');
+          await task.insert(title, description);
+        } catch (error) {
+          console.error(error);
+          jsonResponse(res, {}, 500);
         }
-    }
-]
+      });
 
-export default routes
+      return jsonResponse(res, {}, 201, "Task Created Successfully");
+    },
+  },
+];
+
+export default routes;
