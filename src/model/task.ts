@@ -1,7 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
+import { ResourceNotFoundError } from "../errors/resource-not-found-error";
 
-interface TaskModel {
+export interface TaskModel {
   id: string;
   title: string;
   description: string | null;
@@ -11,6 +12,8 @@ interface TaskModel {
 }
 
 type TaskQuery = Partial<Record<"title" | "description", string>>;
+
+export type TaskUpdate = Omit<TaskModel, "id" | "created_at" | "updated_at">;
 
 export class Task {
   #filePath: string;
@@ -78,6 +81,24 @@ export class Task {
     } else {
       this.tasks.tasks = [newTask];
     }
+
+    await this.#persist();
+  }
+
+  async update(task: TaskUpdate, id: string) {
+    const indexOfTaskToUpdate = this.tasks.tasks.findIndex(
+      (task) => task.id === id,
+    );
+
+    if (indexOfTaskToUpdate === -1) {
+      throw new ResourceNotFoundError();
+    }
+
+    // biome-ignore lint/style/noNonNullAssertion: <It's already proven that the index is valid and the element at index exists>
+    const taskToUpdate = this.tasks.tasks[indexOfTaskToUpdate]!;
+    const taskUpdated = { ...taskToUpdate, ...task, updated_at: new Date() };
+
+    this.tasks.tasks.splice(indexOfTaskToUpdate, 1, taskUpdated);
 
     await this.#persist();
   }

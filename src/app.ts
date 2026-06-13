@@ -1,4 +1,6 @@
 import http from "node:http";
+import { ResourceNotFoundError } from "./errors/resource-not-found-error";
+import { ValidationError } from "./errors/validation-error";
 import routes from "./http/controllers/tasks/routes";
 import Middleware from "./middleware";
 import { Task } from "./model/task";
@@ -22,10 +24,12 @@ declare module "http" {
 export const app = (task: Task) =>
   http.createServer(async (req, res) => {
     try {
-      const { url, method } = req;
+      const { method } = req;
+
+      const mid = new Middleware(req);
 
       const routeUrlFound = routes.filter((route) => {
-        return route.url.test(url ?? "");
+        return route.url.test(mid.urlRequested.pathname);
       });
 
       if (routeUrlFound.length === 0) {
@@ -40,9 +44,7 @@ export const app = (task: Task) =>
         return jsonResponse(res, {}, 405);
       }
 
-      const middleware = new Middleware(req);
-
-      const matchedUrl = url.match(methodRouteUrl.url);
+      const matchedUrl = mid.urlRequested.pathname.match(methodRouteUrl.url);
 
       if (!matchedUrl) {
         return jsonResponse(res, {}, 500);
@@ -76,8 +78,15 @@ export const app = (task: Task) =>
         return jsonResponse(res, {}, 400, "Invalid JSON");
       }
 
-      return await methodRouteUrl.function(req, res, middleware, task);
+      return await methodRouteUrl.function(req, res, task);
     } catch (error) {
+      if (
+        error instanceof ValidationError ||
+        error instanceof ResourceNotFoundError
+      ) {
+        return jsonResponse(res, null, error.httpCode, error.message);
+      }
+
       console.error(error);
       return jsonResponse(res, {}, 500);
     }
