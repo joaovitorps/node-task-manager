@@ -1,15 +1,20 @@
-import jsonResponse from "../../../response-api.js";
-import verifyUrl from "../../../verify-url.js";
-import { createTask } from "./create.js";
+import type {
+  IncomingMessage,
+  RequestOptions,
+  ServerResponse,
+} from "node:http";
+import type Middleware from "../../../middleware";
+import type { Task } from "../../../model/task";
+import { jsonResponse } from "../../../response-api";
+import { verifyUrl } from "../../../verify-url";
+import { createTask } from "./create";
 
 const routes = [
   {
     url: verifyUrl("/tasks/:id"),
     method: "PUT",
-    function: async (req, res, middleware, task) => {
+    function: async (req: RequestOptions, res: ServerResponse, task: Task) => {
       const { query, params } = req;
-
-      console.log(params.id);
 
       return jsonResponse(
         res,
@@ -32,7 +37,12 @@ const routes = [
   {
     url: verifyUrl("/tasks"),
     method: "POST",
-    function: async (req, res, _, task) => {
+    function: async (
+      req: IncomingMessage,
+      res: ServerResponse,
+      _: Middleware,
+      task: Task,
+    ) => {
       await createTask(req, res, task);
     },
   },

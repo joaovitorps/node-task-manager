@@ -2,11 +2,11 @@
   "name": "task-manager",
   "version": "1.0.0",
   "description": "",
-  "main": "./src/server.js",
+  "main": "server.ts",
   "scripts": {
-    "dev": "node --watch ./src/server.js",
-    "test": "node --test '**/*.test.js' '**/*.spec.js'",
-    "test:watch": "node --test --watch '**/*.test.js' '**/*.spec.js'"
+    "dev": "node --watch ./src/server.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,11 @@
   "homepage": "https://github.com/joaovitorps/node-task-manager#readme",
   "devDependencies": {
     "@biomejs/biome": "2.5.0",
-    "supertest": "^7.2.2"
+    "@types/node": "^25.9.3",
+    "supertest": "^7.2.2",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "vitest": "^4.1.8"
   }
 }

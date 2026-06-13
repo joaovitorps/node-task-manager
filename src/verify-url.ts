@@ -1,4 +1,4 @@
-export default function verifyUrl(url) {
+export function verifyUrl(url: string) {
   const routeParamsRegex = /:([a-zA-Z]+)/g;
   const pathWithRouteParams = url.replaceAll(
     routeParamsRegex,

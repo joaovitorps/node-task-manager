@@ -1,9 +1,18 @@
-import { ValidationError } from "../../../errors/validation-error.js";
-import jsonResponse from "../../../response-api.js";
+import type { IncomingMessage, ServerResponse } from "node:http";
+import { ValidationError } from "../../../errors/validation-error";
+import type { Task } from "../../../model/task";
+import { jsonResponse } from "../../../response-api";
 
-export const createTask = async (req, res, task) => {
+export const createTask = async (
+  req: IncomingMessage,
+  res: ServerResponse,
+  task: Task,
+) => {
   try {
-    const { title, description } = req.body;
+    const { title, description } = req.body as {
+      title: string;
+      description?: string;
+    };
 
     if (!title || !description) {
       throw new ValidationError(`Missing "title" or "description"`);
