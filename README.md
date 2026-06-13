@@ -10,9 +10,9 @@ Use this checklist to keep track of your application’s development:
 - [x] Create test for the above implementation
 - [x] Develop the `GET /tasks` route to list all tasks
 - [x] Implement TypeScript
-- [ ] Implement the search feature by `title` and `description` in the `GET /tasks` route
-- [ ] Develop the `PUT /tasks/:id` route to update a task
-- [ ] Add the ID existence validation in the `PUT /tasks/:id` route
+- [x] Implement the search feature by `title` and `description` in the `GET /tasks` route
+- [x] Develop the `PUT /tasks/:id` route to update a task
+- [x] Add the ID existence validation in the `PUT /tasks/:id` route
 - [ ] Develop the `DELETE /tasks/:id` route to remove a task
 - [ ] Add the ID existence validation in the `DELETE /tasks/:id` route
 - [ ] Develop the `PATCH /tasks/:id/complete` route to toggle a task as completed/pending
