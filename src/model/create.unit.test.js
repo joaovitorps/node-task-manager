@@ -1,13 +1,16 @@
-import { readFile } from "node:fs";
-import { describe, it } from "node:test";
-import Task from "./task.js";
+import { describe } from "node:test";
+import { expect } from "vitest";
+import { it } from "../../test/setup";
 
 describe("create task", () => {
-  it("should create a task", async () => {
-    const task = new Task();
-    await task.insert("Test", "Desc.");
-    const fileContentBuffered = await readFile("../../tasks.json");
-    const tasks = JSON.parse(Buffer.from(fileContentBuffered).toString());
-    console.log(tasks);
+  it("should create a task", async ({ db }) => {
+    await db.insert("Test 1", "Some desc");
+    await db.insert("Test 2", "Some other desc");
+
+    expect(db.tasks.tasks).toEqual([
+      expect.objectContaining({ title: "Test 1" }),
+      expect.objectContaining({ title: "Test 2" }),
+    ]);
+    expect(db.tasks.tasks).toHaveLength(2);
   });
 });

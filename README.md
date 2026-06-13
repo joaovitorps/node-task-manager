@@ -9,7 +9,7 @@ Use this checklist to keep track of your application’s development:
 - [x] Install supertest for mock http requests
 - [x] Create test for the above implementation
 - [x] Develop the `GET /tasks` route to list all tasks
-- [ ] Implement TypeScript
+- [x] Implement TypeScript
 - [ ] Implement the search feature by `title` and `description` in the `GET /tasks` route
 - [ ] Develop the `PUT /tasks/:id` route to update a task
 - [ ] Add the ID existence validation in the `PUT /tasks/:id` route
