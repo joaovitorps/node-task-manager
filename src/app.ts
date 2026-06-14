@@ -3,11 +3,8 @@ import { ResourceNotFoundError } from "./errors/resource-not-found-error";
 import { ValidationError } from "./errors/validation-error";
 import routes from "./http/controllers/tasks/routes";
 import Middleware from "./middleware";
-import { Task } from "./model/task";
+import type { Task } from "./model/task";
 import { jsonResponse } from "./response-api";
-
-const task = new Task();
-await task.init();
 
 declare module "http" {
   interface IncomingMessage {
