@@ -21,7 +21,9 @@ declare module "http" {
 export const app = (task: Task) =>
   http.createServer(async (req, res) => {
     try {
-      const { method } = req;
+      const { url, method } = req;
+
+      console.log(url, method);
 
       const mid = new Middleware(req);
 
@@ -61,7 +63,23 @@ export const app = (task: Task) =>
             return resolve({});
           }
 
-          return resolve(JSON.parse(body));
+          const requestContentType = req.headers["content-type"] || "";
+
+          switch (true) {
+            case requestContentType.includes("application/json"):
+              return resolve(JSON.parse(body));
+            case requestContentType.includes("multipart/form-data"): {
+              const boundaryMatch = requestContentType.match(/boundary=(.+)/);
+              if (!boundaryMatch) {
+                throw new ValidationError("Missing boundary in header");
+              }
+              return resolve(body);
+            }
+            default:
+              return reject(
+                `content-type '${requestContentType}' not supported.`,
+              );
+          }
         });
 
         req.on("error", (err) => {
@@ -71,7 +89,8 @@ export const app = (task: Task) =>
 
       try {
         req.body = await getBody;
-      } catch (_) {
+      } catch (error) {
+        console.error(error);
         return jsonResponse(res, {}, 400, "Invalid JSON");
       }
 

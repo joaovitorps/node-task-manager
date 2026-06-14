@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Task } from "../../../model/task";
 import { verifyUrl } from "../../../verify-url";
+import { batchCSVImport } from "./batch-csv-import";
 import { completeTask } from "./complete-task";
 import { createTask } from "./create";
 import { deleteTask } from "./delete";
@@ -20,6 +21,13 @@ const routes = [
     method: "POST",
     function: async (req: IncomingMessage, res: ServerResponse, task: Task) => {
       await createTask(req, res, task);
+    },
+  },
+  {
+    url: verifyUrl("/tasks/batch-csv-import"),
+    method: "POST",
+    function: async (req: IncomingMessage, res: ServerResponse, task: Task) => {
+      await batchCSVImport(req, res, task);
     },
   },
   {

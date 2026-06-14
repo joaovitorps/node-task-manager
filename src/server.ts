@@ -6,4 +6,6 @@ await task.init();
 
 const server = app(task);
 
-server.listen("8000");
+server.listen(8080, "0.0.0.0", () => {
+  console.log(`Server is running at http://localhost:8080/`);
+});

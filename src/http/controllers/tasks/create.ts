@@ -3,15 +3,17 @@ import { ValidationError } from "../../../errors/validation-error";
 import type { Task } from "../../../model/task";
 import { jsonResponse } from "../../../response-api";
 
+export interface CreateTask {
+  title: string;
+  description?: string;
+}
+
 export const createTask = async (
   req: IncomingMessage,
   res: ServerResponse,
   task: Task,
 ) => {
-  const { title, description } = req.body as {
-    title: string;
-    description?: string;
-  };
+  const { title, description } = req.body as CreateTask;
 
   if (!title || !description) {
     throw new ValidationError(`Missing "title" or "description"`);

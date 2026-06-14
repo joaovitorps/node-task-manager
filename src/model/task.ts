@@ -142,6 +142,8 @@ export class Task {
     this.tasks.tasks.splice(indexOfTaskToComplete, 1, taskUpdated);
   }
 
+  async batchCSVImport() {}
+
   async #persist() {
     await writeFile(this.#filePath, JSON.stringify(this.tasks));
   }
