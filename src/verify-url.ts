@@ -5,5 +5,5 @@ export function verifyUrl(url: string) {
     "(?<$1>[a-z0-9-_]+)",
   );
 
-  return new RegExp(`^${pathWithRouteParams}`);
+  return new RegExp(`^(${pathWithRouteParams})$`);
 }
