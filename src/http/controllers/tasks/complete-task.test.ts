@@ -4,8 +4,8 @@ import { describe, expect } from "vitest";
 import { it } from "../../../../test/setup";
 import { app as createApp } from "../../../app";
 
-describe("PUT /tasks/:id", () => {
-  it("should be able to update the requested task by id", async ({ db }) => {
+describe("PATCH /tasks/:id/complete", () => {
+  it("should be able to complete the requested task by id", async ({ db }) => {
     const app = createApp(db);
 
     const task = {
@@ -19,17 +19,10 @@ describe("PUT /tasks/:id", () => {
 
     db.tasks.tasks.push(task);
 
-    const updatedTask = {
-      title: "Title updated",
-      description: "Desc updated",
-      completed_at: null,
-    };
-
     const response = await request(app)
-      .put(`/tasks/${db.tasks.tasks[0]?.id}`)
-      .send(updatedTask)
-      .expect(204);
+      .patch(`/tasks/${db.tasks.tasks[0]?.id}/complete`)
+      .expect(200);
 
-    expect(response.body).toEqual("");
+    expect(response.body).toEqual({ message: "success", status: 200 });
   });
 });

@@ -4,8 +4,8 @@ import { describe, expect } from "vitest";
 import { it } from "../../../../test/setup";
 import { app as createApp } from "../../../app";
 
-describe("PUT /tasks/:id", () => {
-  it("should be able to update the requested task by id", async ({ db }) => {
+describe("DELETE /tasks/:id", () => {
+  it("should be able to delete the requested task by id", async ({ db }) => {
     const app = createApp(db);
 
     const task = {
@@ -19,17 +19,13 @@ describe("PUT /tasks/:id", () => {
 
     db.tasks.tasks.push(task);
 
-    const updatedTask = {
-      title: "Title updated",
-      description: "Desc updated",
-      completed_at: null,
-    };
+    expect(db.tasks.tasks).toHaveLength(1);
 
     const response = await request(app)
-      .put(`/tasks/${db.tasks.tasks[0]?.id}`)
-      .send(updatedTask)
+      .delete(`/tasks/${db.tasks.tasks[0]?.id}`)
       .expect(204);
 
     expect(response.body).toEqual("");
+    expect(db.tasks.tasks).toHaveLength(0);
   });
 });

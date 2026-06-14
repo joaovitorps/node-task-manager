@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { ResourceNotFoundError } from "../errors/resource-not-found-error";
+import { ValidationError } from "../errors/validation-error";
 
 export interface TaskModel {
   id: string;
@@ -101,6 +102,44 @@ export class Task {
     this.tasks.tasks.splice(indexOfTaskToUpdate, 1, taskUpdated);
 
     await this.#persist();
+  }
+
+  async delete(id: string) {
+    const indexOfTaskToDelete = this.tasks.tasks.findIndex(
+      (task) => task.id === id,
+    );
+
+    if (indexOfTaskToDelete === -1) {
+      throw new ResourceNotFoundError();
+    }
+
+    this.tasks.tasks.splice(indexOfTaskToDelete, 1);
+
+    await this.#persist();
+  }
+
+  async complete(id: string) {
+    const indexOfTaskToComplete = this.tasks.tasks.findIndex(
+      (task) => task.id === id,
+    );
+
+    if (indexOfTaskToComplete === -1) {
+      throw new ResourceNotFoundError();
+    }
+
+    // biome-ignore lint/style/noNonNullAssertion: <It's already proven that the index is valid and the element at index exists>
+    const taskToUpdate = this.tasks.tasks[indexOfTaskToComplete]!;
+
+    if (taskToUpdate.completed_at !== null) {
+      throw new ValidationError("Taks is already completed.");
+    }
+
+    const taskUpdated: TaskModel = {
+      ...taskToUpdate,
+      completed_at: new Date(),
+    };
+
+    this.tasks.tasks.splice(indexOfTaskToComplete, 1, taskUpdated);
   }
 
   async #persist() {
