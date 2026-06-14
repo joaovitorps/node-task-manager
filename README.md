@@ -17,6 +17,6 @@ Use this checklist to keep track of your application’s development:
 - [x] Add the ID existence validation in the `DELETE /tasks/:id` route
 - [x] Develop the `PATCH /tasks/:id/complete` route to toggle a task as completed/pending
 - [x] Add the ID existence validation in the `PATCH /tasks/:id/complete` route
-- [ ] Create a separate script for task import
-- [ ] Use the `csv-parse` library to read the CSV file
-- [ ] Implement the logic to send a request to `POST /tasks` for each CSV line in the import script
+- [x] Create a separate script for task import
+- [x] Use the `csv-parse` library to read the CSV file
+- [x] Implement the logic to send a request to `POST /tasks` for each CSV line in the import script
